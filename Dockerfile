@@ -5,25 +5,25 @@ FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb836
 WORKDIR /app
 
 #install dependencies
-COPY package*.json yarn.lock ./
+COPY /app/package*.json /app/yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 #cache dependencies
-COPY . .
+COPY /app . 
 
 RUN yarn build
 
 
 #STAGE 2
-FROM nginx:alpine3.22 AS runner
+FROM nginxinc/nginx-unprivileged:alpine3.22 AS runner
 
-COPY --from=builder /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY /app/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx --from=builder /app/build /usr/share/nginx/html
 
-#RUN addgroup -S app && adduser -S app -G app 
-#USER app
+USER nginx
 
 #expose port
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
+CMD ["-g", "daemon off;"]
