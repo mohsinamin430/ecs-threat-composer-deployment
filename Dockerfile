@@ -1,5 +1,8 @@
+ARG NODE_VERSION=20-alpine
+ARG NGINX_VERSION=alpine3.22
+
 #STAGE 1
-FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS builder
+FROM node:${NODE_VERSION} AS builder
 
 #set workdir
 WORKDIR /app
@@ -15,7 +18,7 @@ RUN yarn build
 
 
 #STAGE 2
-FROM nginxinc/nginx-unprivileged:alpine3.22 AS runner
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 
 COPY /app/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=nginx:nginx --from=builder /app/build /usr/share/nginx/html

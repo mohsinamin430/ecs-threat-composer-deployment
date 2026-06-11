@@ -1,5 +1,10 @@
 node_modules
-.git
+.git/
 .gitignore
 Dockerfile
 .dockerignore
+.tmp/
+.cache/
+*.env*
+*.log
+*.lock
