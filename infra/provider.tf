@@ -8,5 +8,17 @@ terraform {
 }
 
 provider "aws" {
+    region = var.region
+}
+
+
+#Terraform backend configuration for storing state in S3
+terraform {
+  backend "s3" {
+    bucket = "tfstate-threatapp"
+    key    = "global/state/terraform.tfstate"
     region = "eu-west-2"
+    encrypt = true
+    use_lockfile = true
+  }
 }
