@@ -4,8 +4,8 @@ variable "image_tag" {
   default     = "latest"
 }
 
-variable "ecr_repo_name" {
-  description = "ECR repository name for the Docker image"
+variable "ecr_repository_url" {
+  description = "ECR repository URL for the Docker image"
   type        = string
 }
 

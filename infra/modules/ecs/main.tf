@@ -20,11 +20,6 @@ data "aws_iam_role" "ecs_task_execution_role" {
   name = "ecsTaskExecutionRole"
 }
 
-data "aws_ecr_image" "ecs-threatapp-image" {
-  repository_name = var.ecr_repo_name
-  most_recent     = true
-}
-
 #ECS Task Definition and Service
 resource "aws_ecs_task_definition" "ecs-threatapp-task" {
   family                   = "ecs-threatapp-task"
@@ -37,7 +32,7 @@ resource "aws_ecs_task_definition" "ecs-threatapp-task" {
   container_definitions = jsonencode([
     {
       name      = "threatapp-container"
-      image     = data.aws_ecr_image.ecs-threatapp-image.image_uri
+      image     = "${var.ecr_repository_url}:${var.image_tag}"
       essential = true
       portMappings = [
         {

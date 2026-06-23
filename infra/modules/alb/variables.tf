@@ -9,3 +9,7 @@ variable "public_subnet_1_id" {
 variable "public_subnet_2_id" {
     type = string
 }
+
+variable "acm_certificate_arn" {
+    type = string
+}

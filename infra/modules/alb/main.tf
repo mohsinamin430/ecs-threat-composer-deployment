@@ -20,6 +20,18 @@ resource "aws_lb_target_group" "tg-threatapp" {
     }
 }
 
+resource "aws_lb_listener" "alb-listener" {
+    load_balancer_arn = aws_lb.alb-threatapp.arn
+    port = 443
+    protocol = "HTTPS"
+    ssl_policy = "ELBSecurityPolicy-2016-08"
+    certificate_arn = var.acm_certificate_arn
+    default_action {
+        type = "forward"
+        target_group_arn = aws_lb_target_group.tg-threatapp.arn
+    }
+}
+
 #ALB security group, allow traffic from port 80
 resource "aws_security_group" "alb-sg" {
     name = "alb-sg"

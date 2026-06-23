@@ -8,16 +8,17 @@ module "alb" {
   vpc_id = module.vpc.vpc_id
   public_subnet_1_id = module.vpc.public_subnet_1_id
   public_subnet_2_id = module.vpc.public_subnet_2_id
+  acm_certificate_arn = module.acm.acm_certificate_arn
 }
 
 module "ecs" {
   source = "./modules/ecs"
-  
+
   vpc_id = module.vpc.vpc_id
-  ecr_repo_name = module.ecr.repository_name
   public_subnet_1_id = module.vpc.public_subnet_1_id
   public_subnet_2_id = module.vpc.public_subnet_2_id
-  alb_tg_arn = module.alb.alb_tg
+  alb_tg_arn = module.alb.alb_tg_arn
+  ecr_repository_url = module.ecr.repository_url
 }
 
 module "ecr" {
