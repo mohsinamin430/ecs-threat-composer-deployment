@@ -9,3 +9,7 @@ output "alb_dns_name" {
 output "alb_zone_id" {
   value = aws_lb.alb-threatapp.zone_id
 }
+
+output "https_listener_arn" {
+  value = aws_lb_listener.https_listener.arn
+}

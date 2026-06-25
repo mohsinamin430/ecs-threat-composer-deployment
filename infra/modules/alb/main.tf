@@ -5,6 +5,7 @@ resource "aws_lb" "alb-threatapp" {
     internal = false
     security_groups = [aws_security_group.alb-sg.id]
     subnets = [var.public_subnet_1_id, var.public_subnet_2_id]
+    
 }
 
 resource "aws_lb_target_group" "tg-threatapp" {
@@ -20,7 +21,24 @@ resource "aws_lb_target_group" "tg-threatapp" {
     }
 }
 
-resource "aws_lb_listener" "alb-listener" {
+resource "aws_lb_listener" "http_listener" {
+  load_balancer_arn = aws_lb.alb-threatapp.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+    target_group_arn = aws_lb_target_group.tg-threatapp.arn
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+resource "aws_lb_listener" "https_listener" {
     load_balancer_arn = aws_lb.alb-threatapp.arn
     port = 443
     protocol = "HTTPS"
@@ -37,6 +55,13 @@ resource "aws_security_group" "alb-sg" {
     name = "alb-sg"
     description = "Security group for ALB"
     vpc_id = var.vpc_id
+
+    ingress {
+        from_port = 443
+        to_port = 443
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
 
     ingress {
         from_port = 80

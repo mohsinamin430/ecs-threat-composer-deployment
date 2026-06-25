@@ -28,3 +28,8 @@ variable "alb_tg_arn" {
   description = "ARN of the ALB target group for ECS service"
   type        = string
 }
+
+variable "https_listener_arn" {
+  description = "ARN of the HTTPS listener for the ALB"
+  type        = string
+}

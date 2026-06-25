@@ -43,7 +43,7 @@ resource "aws_eip" "nat-eip" {
 
 resource "aws_nat_gateway" "nat-gateway-threatapp" {
     allocation_id = aws_eip.nat-eip.id
-    vpc_id = aws_vpc.vpc-threatapp.id
+    subnet_id = aws_subnet.public-subnet-1.id
 }
 
 

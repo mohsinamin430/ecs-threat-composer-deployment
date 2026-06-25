@@ -58,6 +58,8 @@ resource "aws_ecs_service" "ecs-threatapp-service" {
     assign_public_ip = true
   }
 
+  depends_on = [var.https_listener_arn]
+
   load_balancer {
     target_group_arn = var.alb_tg_arn
     container_name   = "threatapp-container"

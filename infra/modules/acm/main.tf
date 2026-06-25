@@ -1,46 +1,32 @@
 #Create route53 hosted zone
-resource "aws_route53_zone" "hosted_zone" {
+resource "aws_route53_zone" "hosted_zone_threatapp" {
   name = var.domain_name
 }
 
-#A record for www.
-resource "aws_route53_record" "www" {
-  zone_id = aws_route53_zone.hosted_zone.zone_id
-  name    = "www.${var.domain_name}"
-  type    = "A"
-  alias {
-    name = var.alb_dns_name
-    zone_id = var.alb_zone_id
-    evaluate_target_health = true
-  }
-}
+resource "aws_route53domains_registered_domain" "domain" {
+  domain_name = var.domain_name
 
-#A record for root domain
-resource "aws_route53_record" "root" {
-  zone_id = aws_route53_zone.hosted_zone.zone_id
-  name    = var.domain_name
-  type    = "A"
-  alias {
-    name = var.alb_dns_name
-    zone_id = var.alb_zone_id
-    evaluate_target_health = true
+  name_server {  
+    name = aws_route53_zone.hosted_zone_threatapp.name_servers[0]
   }
-}
 
-#Create health check on port 80
-resource "aws_route53_health_check" "health_check" {
-  fqdn = "www.${var.domain_name}"
-  type = "HTTP"
-  resource_path = "/health"
-  port = 80
-  request_interval = 30
-  failure_threshold = 3
+  name_server {  
+    name = aws_route53_zone.hosted_zone_threatapp.name_servers[1]
+  }
+
+  name_server {  
+    name = aws_route53_zone.hosted_zone_threatapp.name_servers[2]
+  }
+
+  name_server {  
+    name = aws_route53_zone.hosted_zone_threatapp.name_servers[3]
+  }
 }
 
 #Create ACM certificate for the domain
 resource "aws_acm_certificate" "cert" {
   domain_name       = var.domain_name
-  subject_alternative_names = ["www.${var.domain_name}"]
+  subject_alternative_names = ["ecs.${var.domain_name}"]
   validation_method = "DNS"
 
   lifecycle {
@@ -58,11 +44,45 @@ resource "aws_route53_record" "cert_validation" {
     }
   }
 
-  zone_id = aws_route53_zone.hosted_zone.zone_id
+  zone_id = aws_route53_zone.hosted_zone_threatapp.zone_id
   name    = each.value.name
   type    = each.value.type
   records = [each.value.record]
   ttl     = 60
+}
+
+#A record for ecs.
+resource "aws_route53_record" "ecs" {
+  zone_id = aws_route53_zone.hosted_zone_threatapp.zone_id
+  name    = "ecs.${var.domain_name}"
+  type    = "A"
+  alias {
+    name = var.alb_dns_name
+    zone_id = var.alb_zone_id
+    evaluate_target_health = true
+  }
+}
+
+#A record for root domain
+resource "aws_route53_record" "root" {
+  zone_id = aws_route53_zone.hosted_zone_threatapp.zone_id
+  name    = var.domain_name
+  type    = "A"
+  alias {
+    name = var.alb_dns_name
+    zone_id = var.alb_zone_id
+    evaluate_target_health = true
+  }
+}
+
+#Create health check on port 80
+resource "aws_route53_health_check" "health_check" {
+  fqdn = "ecs.${var.domain_name}"
+  type = "HTTP"
+  resource_path = "/health"
+  port = 80
+  request_interval = 30
+  failure_threshold = 3
 }
 
 #Validate the ACM certificate. Waits until ACM sees route53 records and validates the certificate. This is required for the ALB to use the certificate.
