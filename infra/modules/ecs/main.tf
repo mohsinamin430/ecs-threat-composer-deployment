@@ -1,10 +1,10 @@
 #ECS Cluster
-resource "aws_ecs_cluster" "ecs-threatapp" {
-  name = "ecs-threatapp"
+resource "aws_ecs_cluster" "ecs_threatapp" {
+  name = "ecs_threatapp"
 }
 
-resource "aws_ecs_cluster_capacity_providers" "ecs-threatapp-capacity-providers" {
-  cluster_name = aws_ecs_cluster.ecs-threatapp.name
+resource "aws_ecs_cluster_capacity_providers" "ecs_threatapp_capacity_providers" {
+  cluster_name = aws_ecs_cluster.ecs_threatapp.name
 
   capacity_providers = ["FARGATE"]
 
@@ -20,9 +20,14 @@ data "aws_iam_role" "ecs_task_execution_role" {
   name = "ecsTaskExecutionRole"
 }
 
+#Pull ECR repo URL
+data "aws_ecr_repository" "threatapp_repo" {
+  name = "threatapp_repo"
+}
+
 #ECS Task Definition and Service
-resource "aws_ecs_task_definition" "ecs-threatapp-task" {
-  family                   = "ecs-threatapp-task"
+resource "aws_ecs_task_definition" "ecs_threatapp_task" {
+  family                   = "ecs_threatapp_task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
@@ -31,8 +36,8 @@ resource "aws_ecs_task_definition" "ecs-threatapp-task" {
 
   container_definitions = jsonencode([
     {
-      name      = "threatapp-container"
-      image     = "${var.ecr_repository_url}:${var.image_tag}"
+      name      = "threatapp_container"
+      image     = "${data.aws_ecr_repository.threatapp_repo.repository_url}:${var.image_tag}"
       essential = true
       portMappings = [
         {
@@ -45,16 +50,16 @@ resource "aws_ecs_task_definition" "ecs-threatapp-task" {
   ])
 }
 
-resource "aws_ecs_service" "ecs-threatapp-service" {
-  name            = "ecs-threatapp-service"
-  cluster         = aws_ecs_cluster.ecs-threatapp.id
-  task_definition = aws_ecs_task_definition.ecs-threatapp-task.arn
+resource "aws_ecs_service" "ecs_threatapp_service" {
+  name            = "ecs_threatapp_service"
+  cluster         = aws_ecs_cluster.ecs_threatapp.id
+  task_definition = aws_ecs_task_definition.ecs_threatapp_task.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
   network_configuration {
     subnets         = [var.public_subnet_1_id, var.public_subnet_2_id]
-    security_groups = [aws_security_group.ecs-sg.id]
+    security_groups = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
 
@@ -62,14 +67,14 @@ resource "aws_ecs_service" "ecs-threatapp-service" {
 
   load_balancer {
     target_group_arn = var.alb_tg_arn
-    container_name   = "threatapp-container"
+    container_name   = "threatapp_container"
     container_port   = 8080
   }
 }
 
 #ECS Security Group
-resource "aws_security_group" "ecs-sg" {
-  name        = "ecs-sg"
+resource "aws_security_group" "ecs_sg" {
+  name        = "ecs_sg"
   description = "Security group for ECS service"
   vpc_id      = var.vpc_id
 

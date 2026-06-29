@@ -18,12 +18,7 @@ module "ecs" {
   public_subnet_1_id = module.vpc.public_subnet_1_id
   public_subnet_2_id = module.vpc.public_subnet_2_id
   alb_tg_arn = module.alb.alb_tg_arn
-  ecr_repository_url = module.ecr.repository_url
   https_listener_arn = module.alb.https_listener_arn
-}
-
-module "ecr" {
-  source = "./modules/ecr"
 }
 
 module "acm" {

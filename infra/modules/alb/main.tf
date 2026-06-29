@@ -1,14 +1,14 @@
 #ALB & target group
-resource "aws_lb" "alb-threatapp" {
+resource "aws_lb" "alb_threatapp" {
     load_balancer_type = "application"
     name = "alb-threatapp"
     internal = false
-    security_groups = [aws_security_group.alb-sg.id]
+    security_groups = [aws_security_group.alb_sg.id]
     subnets = [var.public_subnet_1_id, var.public_subnet_2_id]
     
 }
 
-resource "aws_lb_target_group" "tg-threatapp" {
+resource "aws_lb_target_group" "tg_threatapp" {
     target_type = "ip"
     name = "tg-threatapp"
     port = 8080
@@ -22,13 +22,13 @@ resource "aws_lb_target_group" "tg-threatapp" {
 }
 
 resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.alb-threatapp.arn
+  load_balancer_arn = aws_lb.alb_threatapp.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type = "redirect"
-    target_group_arn = aws_lb_target_group.tg-threatapp.arn
+    target_group_arn = aws_lb_target_group.tg_threatapp.arn
 
     redirect {
       port        = "443"
@@ -39,20 +39,20 @@ resource "aws_lb_listener" "http_listener" {
 }
 
 resource "aws_lb_listener" "https_listener" {
-    load_balancer_arn = aws_lb.alb-threatapp.arn
+    load_balancer_arn = aws_lb.alb_threatapp.arn
     port = 443
     protocol = "HTTPS"
     ssl_policy = "ELBSecurityPolicy-2016-08"
     certificate_arn = var.acm_certificate_arn
     default_action {
         type = "forward"
-        target_group_arn = aws_lb_target_group.tg-threatapp.arn
+        target_group_arn = aws_lb_target_group.tg_threatapp.arn
     }
 }
 
 #ALB security group, allow traffic from port 80
-resource "aws_security_group" "alb-sg" {
-    name = "alb-sg"
+resource "aws_security_group" "alb_sg" {
+    name = "alb_sg"
     description = "Security group for ALB"
     vpc_id = var.vpc_id
 

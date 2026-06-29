@@ -4,11 +4,6 @@ variable "image_tag" {
   default     = "latest"
 }
 
-variable "ecr_repository_url" {
-  description = "ECR repository URL for the Docker image"
-  type        = string
-}
-
 variable "public_subnet_1_id" {
   description = "ID of the first public subnet"
   type        = string
