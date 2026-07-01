@@ -62,8 +62,10 @@ jobs:
       
      - name: Terraform Plan
        id: plan
+       working-directory: ./infra
        run: terraform plan -out=tfplan
 
      - name: Terraform Apply
        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+       working-directory: ./infra
        run: terraform apply -auto-approve tfplan
