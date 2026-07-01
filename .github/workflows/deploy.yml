@@ -58,7 +58,7 @@ jobs:
          directory: ./infra
          framework: terraform
          severity-threshold: medium
-         soft-fail: true
+         soft_fail: true
       
      - name: Terraform Plan
        id: plan
