@@ -3,9 +3,3 @@ variable "region" {
   type = string
   default = "eu-west-2"
 }
-
-variable "vpc-cidrblock" {
-  description = "CIDR block for the VPC"
-  type = string
-  default = "10.0.0.0/16"
-}

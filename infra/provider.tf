@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.12.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -17,7 +19,7 @@ terraform {
   backend "s3" {
     bucket = "tfstate-threatapp"
     key    = "global/state/terraform.tfstate"
-    region = "eu-west-2"
+    region = var.region
     encrypt = true
     use_lockfile = true
   }
