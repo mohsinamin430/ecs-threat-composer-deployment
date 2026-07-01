@@ -19,7 +19,7 @@ terraform {
   backend "s3" {
     bucket = "tfstate-threatapp"
     key    = "global/state/terraform.tfstate"
-    region = var.region
+    region = eu-west-2
     encrypt = true
     use_lockfile = true
   }
