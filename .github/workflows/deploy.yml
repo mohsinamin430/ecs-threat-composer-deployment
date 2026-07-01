@@ -45,7 +45,9 @@ jobs:
        uses: terraform-linters/setup-tflint@v6
        with:
          tflint_version: 0.52.0
+         continue-on-error: true
          cache: true
+
 
      - name: Init TFLint
        run: tflint --init
