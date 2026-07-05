@@ -2,9 +2,10 @@ name: Terraform Deployment
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
 
 concurrency:
   group: deploy-${{ github.repository }}-terraform
@@ -67,7 +68,7 @@ jobs:
       
      - name: Terraform Plan
        id: plan
-       run: terraform plan -out=tfplan
+       run: terraform plan -out=tfplan -var="image_tag=${{ github.event.workflow_run.head_sha }}"
 
      - name: Terraform Apply
        if: github.ref == 'refs/heads/main' && github.event_name == 'push'

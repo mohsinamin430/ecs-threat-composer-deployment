@@ -63,8 +63,6 @@ resource "aws_ecs_service" "ecs_threatapp_service" {
     assign_public_ip = true
   }
 
-  depends_on = [var.https_listener_arn]
-
   load_balancer {
     target_group_arn = var.alb_tg_arn
     container_name   = "threatapp_container"
@@ -82,7 +80,7 @@ resource "aws_security_group" "ecs_sg" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [var.alb_sg_id]
   }
 
   egress {

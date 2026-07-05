@@ -13,3 +13,11 @@ output "alb_zone_id" {
 output "https_listener_arn" {
   value = aws_lb_listener.https_listener.arn
 }
+
+output "http_listener_arn" {
+  value = aws_lb_listener.http_listener.arn
+}
+
+output "alb_sg_id" {
+  value = aws_security_group.alb_sg.id
+}

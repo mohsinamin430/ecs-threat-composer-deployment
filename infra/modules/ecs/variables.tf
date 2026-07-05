@@ -1,7 +1,6 @@
 variable "image_tag" {
   description = "Docker image tag/version to deploy from ECR"
   type        = string
-  default     = "latest"
 }
 
 variable "public_subnet_1_id" {
@@ -24,7 +23,7 @@ variable "alb_tg_arn" {
   type        = string
 }
 
-variable "https_listener_arn" {
-  description = "ARN of the HTTPS listener for the ALB"
+variable "alb_sg_id" {
+  description = "ID of the ALB security group"
   type        = string
 }
