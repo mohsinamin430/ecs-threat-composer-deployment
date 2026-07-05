@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  terraform-plan:
+  terraform-plan-apply:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -72,3 +72,8 @@ jobs:
      - name: Terraform Apply
        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
        run: terraform apply -auto-approve tfplan
+
+     - name: health check
+       run: |
+         echo "Performing health check..."
+         curl https://mohsin430.com/health
