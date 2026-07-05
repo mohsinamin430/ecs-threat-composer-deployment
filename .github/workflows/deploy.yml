@@ -71,7 +71,6 @@ jobs:
        run: terraform plan -out=tfplan -var="image_tag=${{ github.event.workflow_run.head_sha }}"
 
      - name: Terraform Apply
-       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
        run: terraform apply -auto-approve tfplan
 
      - name: health check
