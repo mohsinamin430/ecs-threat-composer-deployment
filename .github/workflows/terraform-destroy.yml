@@ -11,6 +11,7 @@ on:
 concurrency:
   group: deploy-${{ github.repository }}-terraform
 
+
 jobs:
     terraform-destroy:
         runs-on: ubuntu-latest
@@ -20,6 +21,7 @@ jobs:
         defaults:
           run:
             working-directory: ./infra
+
 
         steps:
          - name: Verify Confirmation
@@ -46,6 +48,8 @@ jobs:
            run: terraform init
 
          - name: Create destroy plan
+           env:
+            TF_VAR_image_tag: "destroy"
            run: terraform plan -destroy -out=tfdestroy
                  
          - name: Apply destroy plan
