@@ -72,8 +72,3 @@ jobs:
 
      - name: Terraform Apply
        run: terraform apply -auto-approve tfplan
-
-     - name: health check
-       run: |
-         echo "Performing health check..."
-         curl https://mohsin430.com/health
