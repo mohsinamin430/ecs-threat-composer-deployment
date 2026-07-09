@@ -4,14 +4,54 @@ This a deployment of the Amazon Threat Composer tool, designed to assist with th
 
 ---
 
-## Architecture
-
 ### Architecture Diagram
 
+
+## Repository Structure
+
+threat-composer/
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── README.md
+├── terraform.tfstate
+├── .github/
+│   └── workflows/
+│       ├── docker-build.yml
+│       ├── healthcheck.yml
+│       ├── terraform-deploy.yml
+│       └── terraform-destroy.yml
+├── app/
+├── bootstrap/
+│   ├── .terraform.lock.hcl
+│   ├── main.tf
+│   ├── provider.tf
+│   ├── terraform.tfstate
+│   ├── terraform.tfstate.backup
+│   └── modules/
+│       ├── ecr/
+│       └── s3/
+└── infra/
+    ├── .terraform.lock.hcl
+    ├── main.tf
+    ├── outputs.tf
+    ├── provider.tf
+    ├── variables.tf
+    └── modules/
+        ├── acm/
+        ├── alb/
+        ├── ecs/
+        └── vpc/
+
+
 ### Infrastructure Components
-- AWS services used
-- Main architecture decisions
-- How traffic flows through the system
+VPC
+Region & AZs
+Ingress - ALB
+ECS Fargate
+Routing - ALB Listener
+Security Groups
+DNS
 
 ---
 
@@ -28,14 +68,6 @@ This a deployment of the Amazon Threat Composer tool, designed to assist with th
 
 ### Security Tools
 - 
-
----
-
-## Repository Structure
-
-- Explain the purpose of each main directory
-- Explain Terraform modules
-- Explain workflow files
 
 ---
 
