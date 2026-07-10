@@ -1,21 +1,25 @@
 # ECS Threat Composer App Deployment
+
 ## Overview
-This a deployment of the Amazon Threat Composer tool, designed to assist with threat modeling and security assessments. It has been deployed on ECS Fargate using Terraform (IaaC) and automated using Github Actions.
+
+This project deploys the Amazon Threat Composer application on Amazon ECS Fargate using Terraform. The infrastructure is provisioned using Infrastructure as Code and the deployment process is automated through GitHub Actions. The project demonstrates cloud networking, container deployment, CI/CD, and AWS security best practices.
 
 ---
 
-### Architecture Diagram
+## Architecture Diagram
 
+![Architecture](images/architecture.png)
+
+---
 
 ## Repository Structure
 
-```
+```text
 threat-composer/
 ├── .dockerignore
 ├── .gitignore
 ├── Dockerfile
 ├── README.md
-├── terraform.tfstate
 ├── .github/
 │   └── workflows/
 │       ├── docker-build.yml
@@ -24,16 +28,12 @@ threat-composer/
 │       └── terraform-destroy.yml
 ├── app/
 ├── bootstrap/
-│   ├── .terraform.lock.hcl
 │   ├── main.tf
 │   ├── provider.tf
-│   ├── terraform.tfstate
-│   ├── terraform.tfstate.backup
 │   └── modules/
 │       ├── ecr/
 │       └── s3/
 └── infra/
-    ├── .terraform.lock.hcl
     ├── main.tf
     ├── outputs.tf
     ├── provider.tf
@@ -45,195 +45,255 @@ threat-composer/
         └── vpc/
 ```
 
+---
+## Application Setup
 
-### Infrastructure Components
-VPC
-Region & AZs
-Ingress - ALB
-ECS Fargate
-Routing - ALB Listener
-Security Groups
-DNS
+Do the following commands:
+```bash
+yarn install
+yarn build
+yarn global add serve
+serve -s build
+```
+Navigate to
+```
+http://localhost:3000
+```
+
+## Infrastructure Components
+
+### Networking
+
+- VPC spanning two Availability Zones
+- Public and private subnets
+- Internet Gateway for public internet access
+- Regional NAT Gateway for outbound internet access from private subnets
+
+### Compute
+
+- ECS Cluster running on Fargate
+- ECS Service to maintain the desired task count
+- Task Definition containing the application container
+
+### Traffic Management
+
+- Application Load Balancer
+- Target Group for ECS tasks
+- HTTP to HTTPS redirection
+- ACM certificate for TLS encryption
+
+### DNS
+
+- Route 53 hosted zone
+- Custom domain pointing to the Application Load Balancer
 
 ---
 
 ## Technologies Used
 
 ### Application
-- 
+
+- Amazon Threat Composer
+- Docker
 
 ### Infrastructure
-- 
+
+- AWS
+- Terraform
+- Amazon ECS Fargate
+- Amazon VPC
+- Application Load Balancer
+- Amazon ECR
+- Route 53
+- AWS Certificate Manager
 
 ### CI/CD
-- 
 
-### Security Tools
-- 
+- GitHub Actions
+- GitHub OIDC
+- Terraform CLI
+
+### Security
+
+- Checkov
+- Trivy
+- TFLint
 
 ---
 
 ## Prerequisites
 
-- Required software
-- AWS requirements
-- Account permissions
-- Environment requirements
+Before deploying the project, ensure you have:
+
+- An AWS account
+- Terraform installed
+- Docker installed
+- AWS CLI configured
+- A registered domain managed by Route 53
+- Git installed
 
 ---
 
 ## Infrastructure Setup
 
-### Bootstrap Setup
-- Terraform backend setup
-- State storage
-- State locking
+### Bootstrap
 
-### Terraform Deployment
-- Initialisation
-- Planning
-- Applying infrastructure
+The bootstrap configuration creates the shared infrastructure required for Terraform.
 
----
+- S3 bucket for remote state
+- DynamoDB table for state locking
+- Amazon ECR repository for container images
 
-## Application Setup
+### Deploy Infrastructure
 
-### Local Development
+Deploy the application infrastructure using Terraform.
 
-### Docker Build
+```bash
+cd infra
+terraform init
+terraform plan
+terraform apply
+```
 
-### Docker Run
+Terraform provisions the networking, ECS cluster, load balancer, certificates, DNS records, and supporting resources.
 
 ---
 
 ## CI/CD Pipeline
 
 ### Build Workflow
-- Trigger conditions
-- Build steps
-- Testing
-- Security scanning
-- Image publishing
+
+The build workflow runs when application code is pushed.
+
+It performs the following steps:
+
+- Build the Docker image
+- Scan the image with Trivy
+- Push the image to Amazon ECR
 
 ### Deployment Workflow
-- Authentication method
-- Deployment process
-- Infrastructure updates
-- Application rollout strategy
+
+The deployment workflow authenticates using GitHub OIDC and deploys the latest infrastructure changes.
+
+The workflow:
+
+- Assumes an AWS IAM role
+- Runs Terraform plan
+- Applies infrastructure changes
+- Updates the ECS service
+- Performs a health check after deployment
 
 ---
 
 ## AWS Infrastructure Details
 
 ### Networking
-- VPC design
-- Subnets
-- Routing
-- NAT Gateway
-- Internet Gateway
 
-### Container Infrastructure
-- ECS Cluster
-- Task Definition
-- Services
-- Container configuration
+The application is deployed inside a VPC spanning two Availability Zones.
+
+Public subnets host the Application Load Balancer while ECS tasks run inside private subnets. A regional NAT Gateway provides outbound internet access for the containers.
+
+### Container Platform
+
+The application runs as an ECS Fargate service.
+
+Container images are stored in Amazon ECR and are updated automatically during deployment.
 
 ### Load Balancing
-- ALB setup
-- Target groups
-- Health checks
-- HTTPS configuration
 
-### Domain & Certificates
-- DNS configuration
-- SSL/TLS certificates
+An internet facing Application Load Balancer distributes incoming traffic across ECS tasks.
+
+HTTP requests are redirected to HTTPS using an ACM certificate.
+
+### Domain
+
+Route 53 manages DNS records for the application.
+
+The custom domain resolves directly to the Application Load Balancer.
 
 ---
 
 ## Security
 
 ### Identity and Access Management
-- IAM roles
-- GitHub OIDC
-- Permissions model
+
+- GitHub OIDC for passwordless authentication
+- Least privilege IAM roles
+- ECS task execution role
 
 ### Container Security
-- Image scanning
-- Vulnerability management
+
+- Trivy image scanning
+- Private Amazon ECR repository
 
 ### Infrastructure Security
-- Terraform scanning
-- Security best practices
+
+- Checkov Terraform scanning
+- TFLint validation
+- Security Groups controlling network access
 
 ---
 
-## Environment Configuration
+## Challenges
 
-- Terraform variables
-- Secrets management
-- Environment-specific values
+Some challenges encountered during development included:
 
----
+- ECS image pull failures from ECR
+- ACM certificate DNS validation
+- Route 53 DNS configuration
+- Terraform state locking
+- GitHub OIDC permission issues
+- ALB target group configuration
 
-## Monitoring & Logging
-
-- CloudWatch
-- Application logs
-- Health checks
-- Alerts (if applicable)
-
----
-
-## Deployment Process
-
-Step-by-step deployment flow:
-
-1.
-2.
-3.
-4.
-
----
-
-## Challenges & Troubleshooting
-
-- Problems encountered
-- Root causes
-- Solutions implemented
+Each issue was investigated and resolved while improving the deployment process.
 
 ---
 
 ## Design Decisions
 
-- Why ECS instead of alternatives
-- Why Terraform
-- Why chosen AWS services
-- Trade-offs considered
+Key design choices include:
+
+- ECS Fargate to avoid managing EC2 instances
+- Terraform for repeatable infrastructure deployments
+- GitHub Actions for automated CI/CD
+- ALB for HTTPS termination and traffic routing
+- Private subnets to improve application security
 
 ---
 
 ## Future Improvements
 
-- Scaling improvements
-- Security improvements
-- Automation improvements
-- Cost optimisation
+Potential enhancements include:
+
+- ECS Auto Scaling
+- AWS WAF
+- CloudWatch dashboards and alarms
+- Blue/green deployments
+- AWS Secrets Manager
+- Centralised logging
 
 ---
 
 ## Lessons Learned
 
-- Technical skills gained
-- AWS concepts learned
-- DevOps practices applied
+This project improved my understanding of:
+
+- Terraform modules
+- AWS networking
+- ECS Fargate deployments
+- CI/CD with GitHub Actions
+- IAM roles and GitHub OIDC
+- Container security and infrastructure scanning
 
 ---
 
-## Screenshots / Demo
+## Screenshots
+
+Include screenshots of:
 
 - Architecture diagram
-- CI/CD pipeline
-- AWS resources
-- Application screenshots
-
----
+- GitHub Actions workflows
+- ECS Cluster and Service
+- Application Load Balancer
+- Running application
+- AWS Console resources
