@@ -9,6 +9,7 @@ This a deployment of the Amazon Threat Composer tool, designed to assist with th
 
 ## Repository Structure
 
+```
 threat-composer/
 ├── .dockerignore
 ├── .gitignore
@@ -42,6 +43,7 @@ threat-composer/
         ├── alb/
         ├── ecs/
         └── vpc/
+```
 
 
 ### Infrastructure Components

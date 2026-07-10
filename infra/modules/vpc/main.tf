@@ -42,6 +42,7 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_nat_gateway" "nat_gateway_threatapp" {
+    availability_mode = "regional"
     allocation_id = aws_eip.nat_eip.id
     vpc_id = aws_vpc.vpc_threatapp.id
 }
