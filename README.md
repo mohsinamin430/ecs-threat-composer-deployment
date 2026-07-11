@@ -94,7 +94,6 @@ http://localhost:3000
 ### Application
 
 - Amazon Threat Composer
-- Docker
 
 ### Infrastructure
 
@@ -144,14 +143,21 @@ The bootstrap configuration creates the shared infrastructure required for Terra
 - DynamoDB table for state locking
 - Amazon ECR repository for container images
 
+```bash
+cd bootstrap
+terraform init
+terraform plan
+terraform apply
+```
+
 ### Deploy Infrastructure
 
-Deploy the application infrastructure using Terraform.
+Deploy the application infrastructure using Terraform. (Ensure bootstrap infra has been deployed first)
 
 ```bash
 cd infra
 terraform init
-terraform plan
+terraform plan 
 terraform apply
 ```
 
@@ -237,15 +243,10 @@ The custom domain resolves directly to the Application Load Balancer.
 ## Challenges
 
 Some challenges encountered during development included:
-
-- ECS image pull failures from ECR
+- Building Docker images with non root users in runner stage. Required nginxinc/nginx-unprivileged image
+- ECS image pull failures from ECR. This was due to the default tag was set to "latest" in terraform variables. Resolved by passing github ref through workflow
 - ACM certificate DNS validation
-- Route 53 DNS configuration
-- Terraform state locking
 - GitHub OIDC permission issues
-- ALB target group configuration
-
-Each issue was investigated and resolved while improving the deployment process.
 
 ---
 
@@ -266,12 +267,8 @@ Key design choices include:
 Potential enhancements include:
 
 - ECS Auto Scaling
-- AWS WAF
 - CloudWatch dashboards and alarms
-- Blue/green deployments
-- AWS Secrets Manager
-- Centralised logging
-
+- Dev and Prod workspaces on Terraform
 ---
 
 ## Lessons Learned
