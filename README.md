@@ -289,11 +289,6 @@ This project improved my understanding of:
 
 ## Screenshots
 
-Include screenshots of:
+### App Working
 
-- Architecture diagram
-- GitHub Actions workflows
-- ECS Cluster and Service
-- Application Load Balancer
-- Running application
-- AWS Console resources
+### Sucessful Workflows
