@@ -46,7 +46,21 @@ threat-composer/
 ```
 
 ---
-## Application Setup
+
+## Prerequisites
+
+Before deploying the project, ensure you have:
+
+- An AWS account
+- Terraform installed
+- Docker installed
+- AWS CLI configured
+- A registered domain managed by Route 53
+- Git installed
+
+
+---
+## Local Application Setup
 
 Do the following commands:
 ```bash
@@ -59,6 +73,9 @@ Navigate to
 ```
 http://localhost:3000
 ```
+
+## Dockerfile
+Multi-Stage Dockerfile using nginx to serve static content with a small image blueprint (~30mb). Non-root user for improved security 
 
 ## Infrastructure Components
 
@@ -117,19 +134,6 @@ http://localhost:3000
 - Checkov
 - Trivy
 - TFLint
-
----
-
-## Prerequisites
-
-Before deploying the project, ensure you have:
-
-- An AWS account
-- Terraform installed
-- Docker installed
-- AWS CLI configured
-- A registered domain managed by Route 53
-- Git installed
 
 ---
 
@@ -280,12 +284,16 @@ This project improved my understanding of:
 - ECS Fargate deployments
 - CI/CD with GitHub Actions
 - IAM roles and GitHub OIDC
-- Container security and infrastructure scanning
-
+  
 ---
 
 ## Screenshots
 
 ### App Working
+![App](images/app-running.gif)
 
 ### Sucessful Workflows
+![DockerBuild](images/build+push.png)
+![terraform-deploy](images/terraform-deploy.png)
+![healtcheck](images/healthcheck.png)
+
