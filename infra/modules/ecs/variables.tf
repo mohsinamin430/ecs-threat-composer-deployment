@@ -3,13 +3,13 @@ variable "image_tag" {
   type        = string
 }
 
-variable "public_subnet_1_id" {
-  description = "ID of the first public subnet"
+variable "private_subnet_1_id" {
+  description = "ID of the first private subnet"
   type        = string
 }
 
-variable "public_subnet_2_id" {
-  description = "ID of the second public subnet"
+variable "private_subnet_2_id" {
+  description = "ID of the second private subnet"
   type        = string
 }
 

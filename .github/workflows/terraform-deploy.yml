@@ -1,11 +1,12 @@
 name: Terraform Deployment
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: ["build and push docker image to ECR"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/**'
+    
 
 concurrency:
   group: deploy-${{ github.repository }}-terraform
@@ -13,7 +14,6 @@ concurrency:
 
 jobs:
   terraform-plan-apply:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -69,7 +69,6 @@ jobs:
       
      - name: Terraform Plan
        id: plan
-       run: terraform plan -out=tfplan -var="image_tag=${{ github.event.workflow_run.head_sha }}"
-
+       run: terraform plan -out=tfplan -var="image_tag= ####SSM Required
      - name: Terraform Apply
        run: terraform apply -auto-approve tfplan

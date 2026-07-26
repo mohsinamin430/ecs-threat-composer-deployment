@@ -15,8 +15,8 @@ module "ecs" {
   source = "./modules/ecs"
 
   vpc_id = module.vpc.vpc_id
-  public_subnet_1_id = module.vpc.public_subnet_1_id
-  public_subnet_2_id = module.vpc.public_subnet_2_id
+  private_subnet_1_id = module.vpc.private_subnet_1_id
+  private_subnet_2_id = module.vpc.private_subnet_2_id
   alb_tg_arn = module.alb.alb_tg_arn
   alb_sg_id = module.alb.alb_sg_id
   image_tag = var.image_tag

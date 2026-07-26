@@ -58,9 +58,9 @@ resource "aws_ecs_service" "ecs_threatapp_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = [var.public_subnet_1_id, var.public_subnet_2_id]
+    subnets         = [var.private_subnet_1_id, var.private_subnet_2_id]
     security_groups = [aws_security_group.ecs_sg.id]
-    assign_public_ip = true
+    assign_public_ip = false
   }
 
   load_balancer {

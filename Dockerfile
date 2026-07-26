@@ -19,7 +19,7 @@ COPY /app .
 RUN yarn build
 
 
-#STAGE 2
+## STAGE 2
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 
 COPY /app/nginx/nginx.conf /etc/nginx/nginx.conf
@@ -31,4 +31,8 @@ USER nginx
 EXPOSE 8080
 
 ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
+<<<<<<< Updated upstream
 CMD ["-g", "daemon off;"]
+=======
+CMD ["-g", "daemon off;"] 
+>>>>>>> Stashed changes

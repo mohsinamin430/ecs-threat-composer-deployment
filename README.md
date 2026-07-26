@@ -143,8 +143,7 @@ Multi-Stage Dockerfile using nginx to serve static content with a small image bl
 
 The bootstrap configuration creates the shared infrastructure required for Terraform.
 
-- S3 bucket for remote state
-- DynamoDB table for state locking
+- S3 bucket for remote state & locking
 - Amazon ECR repository for container images
 
 ```bash
@@ -164,8 +163,6 @@ terraform init
 terraform plan 
 terraform apply
 ```
-
-Terraform provisions the networking, ECS cluster, load balancer, certificates, DNS records, and supporting resources.
 
 ---
 
