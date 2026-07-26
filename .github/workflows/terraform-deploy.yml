@@ -13,7 +13,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  get-ssm-parameter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: aws-ssm-to-env
+        uses: avlima/aws-ssm-to-env@master
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        with:
+          ssm_parameter_list: |
+            /OIDC/image_tag:OIDC_IMAGE_TAG
+
+
   terraform-plan-apply:
+    needs: get-ssm-parameter
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -69,6 +82,6 @@ jobs:
       
      - name: Terraform Plan
        id: plan
-       run: terraform plan -out=tfplan -var="image_tag= ####SSM Required
+       run: terraform plan -out=tfplan -var="image_tag=$OIDC_IMAGE_TAG"
      - name: Terraform Apply
        run: terraform apply -auto-approve tfplan
