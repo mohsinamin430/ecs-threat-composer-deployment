@@ -31,8 +31,4 @@ USER nginx
 EXPOSE 8080
 
 ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
-<<<<<<< Updated upstream
-CMD ["-g", "daemon off;"]
-=======
 CMD ["-g", "daemon off;"] 
->>>>>>> Stashed changes
