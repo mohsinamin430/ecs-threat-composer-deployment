@@ -20,15 +20,15 @@ RUN yarn build
 
 
 #STAGE 2
-## FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 
-## COPY /app/nginx/nginx.conf /etc/nginx/nginx.conf
-## COPY --chown=nginx:nginx --from=builder /app/build /usr/share/nginx/html
+COPY /app/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx --from=builder /app/build /usr/share/nginx/html
 
-## USER nginx
+USER nginx
 
 #expose port
-## EXPOSE 8080
+EXPOSE 8080
 
-## ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
-## CMD ["-g", "daemon off;"]
+ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
+CMD ["-g", "daemon off;"]
