@@ -15,6 +15,9 @@ concurrency:
 
 jobs:
   get-ssm-parameter:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
@@ -22,6 +25,7 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
+
       - name: Get parameter
         run: |
           OIDC_IMAGE_TAG=$(aws ssm get-parameter \
