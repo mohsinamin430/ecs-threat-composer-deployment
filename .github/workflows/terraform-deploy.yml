@@ -18,7 +18,12 @@ jobs:
     permissions:
       contents: read
       id-token: write
+
     runs-on: ubuntu-latest
+
+    outputs:
+      image_tag: ${{ steps.get-tag.outputs.image_tag }}
+
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
@@ -27,6 +32,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Get parameter
+        id: get-tag
         run: |
           OIDC_IMAGE_TAG=$(aws ssm get-parameter \
             --name "/OIDC/image_tag" \
@@ -34,11 +40,15 @@ jobs:
             --query "Parameter.Value" \
             --output text)
 
-          echo "OIDC_IMAGE_TAG=$OIDC_IMAGE_TAG" >> $GITHUB_ENV
+          echo "image_tag=$OIDC_IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Check image tag
         run: |
           echo "OIDC_IMAGE_TAG=$OIDC_IMAGE_TAG"
+          if [ -z "$OIDC_IMAGE_TAG" ]; then
+            echo "Image tag is empty"
+            exit 1
+          fi
 
 
   terraform-plan-apply:
@@ -98,6 +108,6 @@ jobs:
       
      - name: Terraform Plan
        id: plan
-       run: terraform plan -out=tfplan -var="image_tag=$OIDC_IMAGE_TAG"
+       run: terraform plan -out=tfplan -var="image_tag=${{ needs.get-ssm-parameter.outputs.image_tag }}"
      - name: Terraform Apply
        run: terraform apply -auto-approve tfplan
