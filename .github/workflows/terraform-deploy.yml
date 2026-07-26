@@ -17,13 +17,15 @@ jobs:
   get-ssm-parameter:
     runs-on: ubuntu-latest
     steps:
-      - name: aws-ssm-to-env
-        uses: avlima/aws-ssm-to-env@master
-        env:
-          AWS_REGION: ${{ vars.AWS_REGION }}
-        with:
-          ssm_parameter_list: |
-            /OIDC/image_tag:OIDC_IMAGE_TAG
+      - name: Get parameter
+        run: |
+          OIDC_IMAGE_TAG=$(aws ssm get-parameter \
+            --name "/OIDC/image_tag" \
+            --with-decryption \
+            --query "Parameter.Value" \
+            --output text)
+
+          echo "OIDC_IMAGE_TAG=$OIDC_IMAGE_TAG" >> $GITHUB_ENV
 
 
   terraform-plan-apply:
