@@ -45,6 +45,8 @@ resource "aws_nat_gateway" "nat_gateway_threatapp" {
     availability_mode = "regional"
     allocation_id = aws_eip.nat_eip.id
     vpc_id = aws_vpc.vpc_threatapp.id
+    
+    depends_on = [aws_internet_gateway.igw_threatapp]
 }
 
 
