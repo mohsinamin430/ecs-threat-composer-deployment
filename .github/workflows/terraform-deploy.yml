@@ -98,6 +98,6 @@ jobs:
       
      - name: Terraform Plan
        id: plan
-       run: terraform plan -out=tfplan -var="oidc_image_tag=$OIDC_IMAGE_TAG"
+       run: terraform plan -out=tfplan -var="image_tag=$OIDC_IMAGE_TAG"
      - name: Terraform Apply
        run: terraform apply -auto-approve tfplan
